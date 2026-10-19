@@ -1,0 +1,24 @@
+---
+import { ChartScatter, ChevronDown, Download, FileText, Layers, Play, Plus, RotateCcw, SlidersHorizontal, X } from "@lucide/astro";
+const icons = {
+    align: Play,
+    close: X,
+    "chevron-down": ChevronDown,
+    download: Download,
+    examples: ChartScatter,
+    feasible: Layers,
+    paper: FileText,
+    plus: Plus,
+    reset: RotateCcw,
+    sliders: SlidersHorizontal,
+    video: Play,
+} as const;
+interface Props {
+    name: keyof typeof icons;
+    size?: number;
+    class?: string;
+}
+const { name, size = 16, class: className } = Astro.props;
+const Symbol = icons[name];
+---
+<Symbol size={size} class:list={["ui-icon", className]} stroke-width={1.75} fill={name === "video" ? "currentColor" : "none"} aria-hidden="true" focusable="false" />

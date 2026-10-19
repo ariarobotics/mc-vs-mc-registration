@@ -1,0 +1,94 @@
+---
+import Tex from "./Tex.astro";
+import Icon from "./Icon.astro";
+import { sitePath } from "../lib/paths";
+import "../styles/real-world.css";
+---
+
+<div class="real-world-explorer" data-real-world-explorer data-manifest={sitePath("data/real-world/manifest.json")} data-graph-open="false">
+  <div class="rw-header">
+    <div><h3 data-rw-title>Real scans</h3><p class="rw-subline" data-rw-detail></p></div>
+    <label class="rw-sample-picker"><span>Examples</span><select data-rw-sample disabled aria-label="Real scan example"><option>Loading scenes…</option></select></label>
+  </div>
+
+  <div class="rw-study-controls">
+    <label><span>Alignment</span><select data-rw-set disabled aria-label="Alignment and highlighted correspondences"><option>Loading alignments…</option></select></label>
+    <div class="rw-study-actions">
+      <button type="button" class="rw-graph-toggle" data-rw-graph-toggle disabled aria-pressed="false" aria-label="Show consistency graph"><Icon name="examples" size={14} /> Consistency graph</button>
+      <button type="button" class="rw-reset-alignment" data-rw-reset-input disabled aria-label="Reset alignment" title="Reset alignment"><Icon name="reset" size={16} /></button>
+      <button type="button" class="rw-align-button" data-rw-animate disabled><Icon name="align" size={14} /> Align</button>
+    </div>
+  </div>
+
+  <div class="rw-workspace">
+    <div class="rw-viewport">
+      <canvas data-rw-canvas aria-label="Source and target scans. Drag to pan; Shift-drag or right-button drag to rotate; scroll to zoom."></canvas>
+      <div class="rw-placeholder" data-rw-placeholder role="status"><span class="rw-loader" aria-hidden="true"></span><strong data-rw-loading>Loading real scans…</strong><button type="button" data-rw-retry hidden><Icon name="reset" size={14} /> Try again</button></div>
+      <div class="rw-cloud-legend" aria-label="Scan colors"><span><i class="rw-source-dot"></i>Source</span><span><i class="rw-target-dot"></i>Target</span><span><i class="rw-tolerance-key" aria-hidden="true"></i>Tolerance <Tex expression={String.raw`\tau`} /></span></div>
+      <div class="rw-view-actions"><button type="button" data-rw-reset disabled aria-label="Reset camera" title="Reset camera"><Icon name="reset" size={16} /></button></div>
+      <div class="rw-grid-scale" data-rw-grid-scale></div>
+    </div>
+    <div class="rw-graph-panel" data-rw-graph-panel hidden>
+      <div class="rw-graph-heading"><h4>Consistency graph</h4><span data-rw-graph-size></span></div>
+      <p class="rw-graph-rule"><Tex expression={String.raw`\delta_{ij}=\big|\|p_i-p_j\|-\|q_i-q_j\|\big|\le\epsilon`} /></p>
+      <div class="rw-graph-wrap"><canvas class="rw-graph-edges" data-rw-graph-edges aria-hidden="true"></canvas><svg class="rw-graph" data-rw-graph viewBox="0 0 320 300" overflow="hidden" role="img" aria-label="Consistency graph of the original correspondences"></svg></div>
+      <label class="rw-epsilon-control"><span>Edge tolerance <Tex expression={String.raw`\epsilon`} /></span><div class="rw-value"><input type="number" min="0" step="any" value="0.1" data-rw-epsilon-number disabled aria-label="Edge tolerance in meters" /><span>m</span></div><input type="range" min="0" max="1" step="any" value="0.1" data-rw-epsilon disabled aria-label="Consistency graph edge tolerance in meters" /></label>
+      <div class="rw-graph-metrics" aria-live="polite"><span><b data-rw-edge-count>—</b> edges</span><span><span data-rw-clique-label>Clique size</span> <b data-rw-clique-size>—</b></span></div>
+      <div class="rw-graph-key"><span class="rw-highlight-key"><i></i>Selected alignment</span><span><i></i>Other matches</span></div>
+    </div>
+  </div>
+
+  <div class="rw-summary">
+    <div class="rw-fit-metrics" aria-live="polite">
+      <div><span>Selected matches</span><b data-rw-selected-count>—</b></div>
+      <div><span>Maximum residual</span><output data-rw-fit-error>—</output></div>
+      <div><span>Within <Tex expression={String.raw`\tau`} /></span><b data-rw-current-consensus>—</b></div>
+    </div>
+    <label class="rw-tau-control"><span>Point tolerance <Tex expression={String.raw`\tau`} /></span><div class="rw-value"><input type="number" min="0" step="any" value="0.05" data-rw-tau-number disabled aria-label="Point tolerance in meters" /><span>m</span></div><input type="range" min="0" max="0.35" step="any" value="0.05" data-rw-tau disabled aria-label="Point residual tolerance in meters" /></label>
+  </div>
+</div>
+
+<script>
+function initializeRealWorldExplorers() {
+    document.querySelectorAll<HTMLElement>("[data-real-world-explorer]").forEach((root) => {
+        const placeholder = root.querySelector<HTMLElement>("[data-rw-placeholder]")!;
+        const loading = root.querySelector<HTMLElement>("[data-rw-loading]")!;
+        const retry = root.querySelector<HTMLButtonElement>("[data-rw-retry]")!;
+        let dispose: (() => void) | undefined;
+        let starting = false;
+        const start = async () => {
+            if (starting)
+                return;
+            starting = true;
+            placeholder.hidden = false;
+            retry.hidden = true;
+            root.dataset.error = "false";
+            loading.textContent = "Loading real scans…";
+            try {
+                const { mountRealWorldExplorer } = await import("../lib/real-world-viewer");
+                const controller = await mountRealWorldExplorer(root);
+                dispose = controller.dispose;
+            }
+            catch (error) {
+                root.dataset.error = "true";
+                loading.textContent = error instanceof Error ? error.message : "The 3D viewer could not load.";
+                retry.hidden = false;
+                console.error(error);
+            }
+            finally {
+                starting = false;
+            }
+        };
+        retry.addEventListener("click", () => void start());
+        const observer = new IntersectionObserver((entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+                observer.disconnect();
+                void start();
+            }
+        }, { rootMargin: "250px" });
+        observer.observe(root);
+        window.addEventListener("pagehide", () => { observer.disconnect(); dispose?.(); }, { once: true });
+    });
+}
+initializeRealWorldExplorers();
+</script>

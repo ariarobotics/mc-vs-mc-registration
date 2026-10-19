@@ -1,0 +1,43 @@
+---
+import Icon from "./Icon.astro";
+---
+<details class="controls-help" data-controls-help>
+  <summary><Icon name="sliders" /><span>Controls</span></summary>
+  <div class="controls-help-panel">
+    <div><span class="control-gesture"><kbd>Click point</kbd></span><span>Show allowed motion</span></div>
+    <div><span class="control-gesture">Preserve edges</span><span>Keep current graph edges</span></div>
+    <div><span class="control-gesture"><kbd>Double click</kbd></span><span>Select cloud</span></div>
+    <div><span class="control-gesture"><kbd>Shift</kbd><span>+</span><kbd>click</kbd></span><span>Select points</span></div>
+    <div class="rotation-control"><span class="control-gesture"><kbd>Shift</kbd><span>+</span><kbd>drag</kbd><span>/</span><kbd title="Right mouse button">RMB drag</kbd></span><span>Rotate in 3D viewer</span></div>
+  </div>
+</details>
+<style>
+  .controls-help { position:relative; flex-shrink:0; font-family:var(--sans); font-size:.77rem; color:#526b59; }
+  .controls-help summary { display:flex; align-items:center; gap:7px; list-style:none; cursor:pointer; padding:8px 12px; border:1px solid #d9e0d9; border-radius:6px; background:#fffefa; }
+  .controls-help summary::-webkit-details-marker { display:none; }
+  .controls-help summary:focus-visible { outline:2px solid #237d74; outline-offset:3px; }
+  .controls-help[open] summary { background:#edf3ed; border-color:#9db5a5; }
+  .controls-help-panel { position:absolute; top:calc(100% + 8px); left:0; z-index:20; width:310px; max-width:calc(100vw - 50px); padding:13px; background:#fffefa; border:1px solid #d9e0d9; border-radius:9px; box-shadow:0 6px 24px #263b3220; }
+  .controls-help-panel > div { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:29px; }
+  .controls-help-panel > div + div { margin-top:9px; }
+  .controls-help-panel > .rotation-control { align-items:flex-start; flex-direction:column; gap:5px; margin-top:13px; }
+  .control-gesture { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+  .controls-help kbd { display:inline-flex; align-items:center; min-height:23px; padding:2px 7px; border:1px solid #ccd5cc; border-bottom-width:3px; border-radius:5px; background:linear-gradient(#fffefa,#edf1eb); color:#233d31; font:550 .68rem var(--sans); }
+</style>
+<script>
+document.addEventListener("pointerdown", event => {
+    const target = event.target;
+    document.querySelectorAll<HTMLDetailsElement>("[data-controls-help][open]").forEach(details => {
+        if (target instanceof Node && !details.contains(target))
+            details.open = false;
+    });
+});
+document.addEventListener("keydown", event => {
+    if (event.key !== "Escape")
+        return;
+    document.querySelectorAll<HTMLDetailsElement>("[data-controls-help][open]").forEach(details => {
+        details.open = false;
+        details.querySelector<HTMLElement>("summary")?.focus();
+    });
+});
+</script>

@@ -1,0 +1,21 @@
+name = "clique-certificate"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["CliqueCertificate"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+
+weak.linter.style.header = false
+weak.linter.style.emptyLine = false
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.35.0-rc3"
+
+[[lean_lib]]
+name = "CliqueCertificate"

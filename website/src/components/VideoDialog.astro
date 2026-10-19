@@ -1,0 +1,43 @@
+---
+import Icon from "./Icon.astro";
+interface Props { src: string; }
+const { src } = Astro.props;
+---
+
+<button type="button" class="pill" data-video-open aria-haspopup="dialog" aria-controls="paper-video">
+  <Icon name="video" /> Video
+</button>
+
+<dialog id="paper-video" class="video-dialog" aria-label="Paper video">
+  <div class="video-toolbar">
+    <button type="button" data-video-close aria-label="Close video"><Icon name="close" size={20} /></button>
+  </div>
+  <video src={src} controls playsinline preload="none" aria-label="Paper presentation"></video>
+</dialog>
+
+<style>
+  :global(html:has(#paper-video[open])) { overflow:hidden; }
+  .video-dialog { width:min(1100px, calc(100vw - 32px)); max-height:calc(100dvh - 32px); margin:auto; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--ink); }
+  .video-dialog::backdrop { background:rgb(15 25 30 / .75); }
+  .video-toolbar { display:flex; justify-content:flex-end; margin-bottom:8px; }
+  .video-toolbar button { display:grid; place-items:center; width:36px; height:36px; padding:0; border:0; border-radius:6px; background:transparent; color:inherit; cursor:pointer; }
+  .video-toolbar button:hover { background:var(--line-soft); }
+  video { display:block; width:100%; max-height:calc(100dvh - 108px); aspect-ratio:16 / 9; object-fit:contain; border-radius:6px; background:#000; }
+</style>
+
+<script>
+  const open = document.querySelector<HTMLButtonElement>("[data-video-open]")!;
+  const dialog = document.querySelector<HTMLDialogElement>("#paper-video")!;
+  const video = dialog.querySelector("video")!;
+  open.addEventListener("click", () => {
+    dialog.showModal();
+    void video.play().catch(() => {});
+  });
+  dialog.querySelector("[data-video-close]")!.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("close", () => video.pause());
+  dialog.addEventListener("click", event => {
+    if (event.target !== dialog) return;
+    const bounds = dialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+  });
+</script>

@@ -1,0 +1,11 @@
+---
+import { renderToString } from "katex";
+import "katex/dist/katex.min.css";
+interface Props {
+    expression: string;
+    display?: boolean;
+}
+const { expression, display = false } = Astro.props;
+const markup = renderToString(expression, { displayMode: display, throwOnError: true, output: "htmlAndMathml", trust: false });
+---
+<span class:list={["tex", { "tex-display": display }]} set:html={markup} />

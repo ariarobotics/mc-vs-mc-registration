@@ -1,0 +1,102 @@
+---
+import Page from "../layouts/Page.astro";
+import Tex from "../components/Tex.astro";
+import Icon from "../components/Icon.astro";
+import VideoDialog from "../components/VideoDialog.astro";
+import ExampleExplorer from "../components/ExampleExplorer.astro";
+import RealWorldExplorer from "../components/RealWorldExplorer.astro";
+import { paper, results } from "../data/site";
+---
+<Page>
+  <main id="main">
+    <section class="hero" aria-labelledby="paper-title">
+      <p class="eyebrow">Supplementary material</p>
+      <h1 id="paper-title">{paper.titleLines[0]} <small>{paper.titleLines[1]}</small></h1>
+      <div class="publication-links" aria-label="Publication resources">
+        <a class="pill pill-primary" href={paper.links.paper}><Icon name="paper" /> Paper</a>
+        <a class="pill" href={paper.links.proofs} download><Icon name="download" /> Lean Proofs</a>
+        <VideoDialog src={paper.links.video} />
+        <a class="pill" href="#examples"><Icon name="examples" /> Examples</a>
+      </div>
+      <section id="abstract" class="abstract-copy" aria-labelledby="abstract-title">
+        <h2 id="abstract-title">Abstract</h2>
+        <p>{paper.abstract.split(/(\$[^$]+\$|\\url\{[^}]+\}|Lean theorem prover)/).map((part) =>
+          part.startsWith("$") ? <Tex expression={part.slice(1, -1)} /> :
+          part.startsWith("\\url{") ? <a href={part.slice(5, -1)}>{part.slice(5, -1)}</a> :
+          part === "Lean theorem prover" ? <a href={paper.links.lean}>{part}</a> : part.replaceAll("~", "\u00a0")
+        )}</p>
+      </section>
+    </section>
+
+    <section id="results" class="section results-section" aria-labelledby="results-title">
+      <div class="section-heading">
+        <h2 id="results-title">Main Results</h2>
+      </div>
+      <div class="results-definitions" role="region" aria-labelledby="definitions-title">
+        <h3 id="definitions-title" class="definitions-title">Definitions</h3>
+        <div class="definition-groups">
+          <section class="definition-group" aria-labelledby="consensus-definition">
+            <h4 id="consensus-definition">Maximum Consensus</h4>
+            <dl class="definition-list">
+              <div class="definition-row"><dt>Alignment Error</dt><dd><Tex expression={String.raw`\rho(C)=\min_{T\in\mathrm{E}(d)}\max_{i\in C}\|T(p_i)-q_i\|`} display /></dd></div>
+              <div class="definition-row"><dt>Maximum Consensus</dt><dd><Tex expression={String.raw`\operatorname{MC}(\tau)=\max\{|C|:\rho(C)\le\tau\}`} display /></dd></div>
+            </dl>
+          </section>
+          <section class="definition-group" aria-labelledby="pairwise-definition">
+            <h4 id="pairwise-definition">Pairwise Consistency</h4>
+            <dl class="definition-list">
+              <div class="definition-row"><dt>Pairwise Discrepancy</dt><dd><Tex expression={String.raw`\delta_{ij}=\big|\|p_i-p_j\|-\|q_i-q_j\|\big|`} display /></dd></div>
+              <div class="definition-row"><dt>Consistency Graph</dt><dd><Tex expression={String.raw`E(G_\epsilon)=\{\{i,j\}:i<j,\ \delta_{ij}\le\epsilon\}`} display /></dd></div>
+              <div class="definition-row"><dt>Maximum Clique</dt><dd><Tex expression={String.raw`\omega(G_\epsilon)=\max_{C\text{ clique in }G_\epsilon}|C|`} display /></dd></div>
+            </dl>
+          </section>
+          <section class="definition-group" aria-labelledby="local-definition">
+            <h4 id="local-definition">Local Consistency Tests</h4>
+            <dl class="definition-list">
+              <div class="definition-row"><dt><Tex expression="k" />-Group Alignment Error</dt><dd><Tex expression={String.raw`\rho_k(C)=\max_{I\subseteq C,\,|I|\le k}\rho(I)`} display /></dd></div>
+              <div class="definition-row"><dt>Local Consensus Bound</dt><dd><Tex expression={String.raw`\operatorname{MC}_k(\tau)=\max\{|C|:\rho_k(C)\le\tau\}`} display /></dd></div>
+            </dl>
+          </section>
+          <section class="definition-group" aria-labelledby="restricted-definition">
+            <h4 id="restricted-definition">Restricted Subproblems</h4>
+            <dl class="definition-list">
+              <div class="definition-row"><dt>Translation<span class="definition-note">(fixed <Tex expression="R" />)</span></dt><dd><Tex expression={String.raw`\rho^{(t)}(C)=\min_{t\in\mathbb R^d}\max_{i\in C}\|Rp_i+t-q_i\|`} display /></dd></div>
+              <div class="definition-row"><dt>Proper Rigid Motions</dt><dd><Tex expression={String.raw`\rho^+(C)=\min_{T\in\mathrm{SE}(d)}\max_{i\in C}\|T(p_i)-q_i\|`} display /></dd></div>
+            </dl>
+          </section>
+        </div>
+      </div>
+      <div class="results-grid">
+        {results.map(result => <article class="result-card">
+          <p class="eyebrow">{result.label}</p>
+          <h3>{result.title}</h3>
+          <section class="result-consistency">
+            <h4>Pairwise consistency</h4>
+            <p class="result-factor">{result.pairwiseFactor ? <>Factor <Tex expression={result.pairwiseFactor} /></> : "Unbounded"}</p>
+            {result.pairwiseExpression && <div class="result-equation"><Tex expression={result.pairwiseExpression} display /></div>}
+            <p>{result.pairwiseExplanation}</p>
+          </section>
+          <section class="result-consistency">
+            <h4>Higher-order consistency</h4>
+            <dl class="result-facts">
+              <div><dt>First sufficient order</dt><dd><Tex expression={result.order} /></dd></div>
+              <div><dt>Error factor</dt><dd><Tex expression={result.factor} /></dd></div>
+            </dl>
+            <div class="result-equation"><Tex expression={result.expression} display /></div>
+            <p>{result.explanation.split(/(d \+ \d+)/).map(part => /^d \+ \d+$/.test(part) ? <Tex expression={part} /> : part)}</p>
+          </section>
+        </article>)}
+      </div>
+    </section>
+
+    <section id="examples" class="section" aria-labelledby="examples-title">
+      <div class="section-heading"><h2 id="examples-title">Synthetic Examples</h2></div>
+      <ExampleExplorer />
+    </section>
+
+    <section id="real-world" class="section" aria-labelledby="real-world-title">
+      <div class="section-heading"><h2 id="real-world-title">Real-world Examples</h2></div>
+      <RealWorldExplorer />
+    </section>
+  </main>
+</Page>

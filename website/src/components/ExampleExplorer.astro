@@ -1,0 +1,69 @@
+---
+import Tex from "./Tex.astro";
+import Icon from "./Icon.astro";
+import ControlsHelp from "./ControlsHelp.astro";
+import { explorerPresets } from "../lib/explorer-model";
+import "../styles/explorer.css";
+const first = explorerPresets[0];
+---
+<section class="native-explorer" data-native-explorer aria-label="Synthetic registration examples">
+  <div class="construction-stage">
+    <header class="construction-heading">
+      <div class="setup-picker"><span>Problem setup</span><div class="optimizer-picker" role="group" aria-label="Problem setup"><button type="button" data-optimizer="translation" aria-pressed="true" aria-label="Translation" title="Translation"><Tex expression={String.raw`\mathbb{R}^d`} /></button><button type="button" data-optimizer="proper" aria-pressed="false" aria-label="Proper rigid motion" title="Proper rigid motion"><Tex expression={String.raw`\mathrm{SE}(d)`} /></button><button type="button" data-optimizer="rigid" aria-pressed="false" aria-label="Rigid motion" title="Rigid motion"><Tex expression={String.raw`\mathrm{E}(d)`} /></button></div></div>
+      <div class="dimension-picker" role="group" aria-label="Dimension"><button type="button" data-dimension="2" aria-pressed="true">2D</button><button type="button" data-dimension="3" aria-pressed="false">3D</button></div>
+      <div class="example-resources">
+        <label class="example-picker">Examples <select data-example aria-label="Examples"></select></label>
+      </div>
+    </header>
+    <div class="construction-formula" data-construction-formula></div>
+    <div class="edit-toolbar">
+      <ControlsHelp />
+      <div class="construction-options" hidden>
+      <label data-scale-control hidden><span>Scale <Tex expression={String.raw`\ell`} /></span><input type="range" data-scale min="1" max="100" step="any" value="12" aria-label="Construction parameter" /><input type="number" data-scale-number value="12" step="0.01" aria-label="Construction parameter value" /></label>
+      <label data-count-control hidden><span>Points <Tex expression="n" /></span><select data-count aria-label="Number of correspondences"></select></label>
+      </div>
+      <div class="fit-actions">
+        <button type="button" class="quiet-button icon-button" data-reset title="Reset alignment" aria-label="Reset alignment"><Icon name="reset" /></button>
+        <button type="button" class="align-button" data-align><Icon name="align" /><span data-align-label>Align</span></button>
+      </div>
+    </div>
+    <div class="linked-views">
+      <div class="geometry-panel">
+        <div class="viewport-heading"><h4>Point clouds</h4><div class="point-cloud-actions"><button type="button" class="preserve-edges" data-preserve-edges aria-pressed="true" title="Keep existing graph edges while dragging points">Preserve edges</button><button type="button" class="quiet-button icon-button add-point" data-add title="Add correspondence" aria-label="Add correspondence"><Icon name="plus" /></button></div></div>
+        <svg data-geometry viewBox="0 0 560 390" role="group" aria-label="Draggable source and target points"><title>Source and target correspondences</title></svg>
+        <div class="geometry-legend"><span><i class="source-key"></i>Source</span><span><i class="target-key"></i>Target</span><span><i class="tolerance-key"></i>Tolerance <Tex expression={String.raw`\tau`} /></span><span data-motion-legend hidden><i class="motion-key"></i><span data-motion-label>Allowed motion</span></span></div>
+      </div>
+      <div class="analysis-panel" data-analysis-panel>
+        <div class="tolerance-controls">
+          <div class="tolerance-control"><label for="geometry-tau">Point tolerance <Tex expression={String.raw`\tau`} /></label><input type="number" data-tau-number step="0.01" min="0" value={first.defaults.tau} aria-label="Point tolerance value" /><input id="geometry-tau" data-tau type="range" min="0" max="3" step="any" value={first.defaults.tau} /></div>
+          <div class="tolerance-control"><label for="graph-epsilon">Edge tolerance <Tex expression={String.raw`\epsilon`} /></label><input type="number" data-epsilon-number step="0.01" min="0" value={first.defaults.epsilon} aria-label="Edge tolerance value" /><input id="graph-epsilon" data-epsilon type="range" min="0" max="4" step="any" value={first.defaults.epsilon} /></div>
+        </div>
+        <div class="analysis-heading viewport-heading">
+          <h4 data-graph-title>Consistency graph <Tex expression={String.raw`G_\epsilon`} /></h4><span class="graph-count" data-edge-count></span>
+          <label data-branch-control hidden><select data-branch aria-label="Orientation component"><option value="proper">det R = +1</option><option value="improper">det R = −1</option></select></label>
+          <button class="feasible-toggle" type="button" data-feasible-toggle aria-pressed="false" aria-controls="feasible-set-plot" title="Show feasible sets"><Icon name="feasible" /><span>Feasible sets</span><Icon name="chevron-down" class="toggle-chevron" /></button>
+        </div>
+        <div class="analysis-plots">
+          <div id="feasible-set-plot" class="feasible-panel" data-feasible-panel hidden>
+            <svg data-feasible viewBox="0 0 560 390" role="group" aria-label="Tolerance constraints and their common feasible sets"><title>Feasible sets</title></svg>
+          </div>
+          <div class="graph-panel" data-graph-panel>
+            <svg data-graph viewBox="0 0 340 390" role="group" aria-label="Consistency graph"><title>Edges indicate pairwise compatibility</title></svg>
+          </div>
+          <div class="edge-tooltip" data-edge-tooltip role="status" hidden></div>
+        </div>
+        <div class="graph-legend" data-graph-legend><span><i class="within-key"></i>Maximum clique</span><span><i class="missing-key"></i>Missing edge</span></div>
+        <div class="graph-legend feasible-legend" data-feasible-legend hidden><span><i class="constraint-key"></i>Constraints</span><span title="Spatial surfaces and rotation cross-sections are sampled"><i class="intersection-key"></i>Intersection</span></div>
+        <dl class="native-metrics" data-native-metrics aria-label="Consensus and clique sizes"></dl>
+      </div>
+    </div>
+    <p class="explorer-error" data-explorer-error hidden role="alert"></p>
+    <noscript><p class="explorer-error">Enable JavaScript to use the visualizers.</p></noscript>
+  </div>
+</section>
+<script>
+import { mountExplorer } from "../lib/native-explorer";
+const root = document.querySelector<HTMLElement>("[data-native-explorer]");
+if (root)
+    mountExplorer(root);
+</script>
