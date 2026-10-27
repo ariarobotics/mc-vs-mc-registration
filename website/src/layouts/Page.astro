@@ -2,6 +2,8 @@
 import "../styles/global.css";
 import { paper } from "../data/site";
 import { sitePath } from "../lib/paths";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 ---
 <!doctype html>
 <html lang="en">
@@ -19,7 +21,9 @@ import { sitePath } from "../lib/paths";
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="page-shell">
+      <SiteHeader />
       <slot />
+      <SiteFooter />
     </div>
   </body>
 </html>
