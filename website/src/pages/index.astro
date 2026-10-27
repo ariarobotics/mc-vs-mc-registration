@@ -12,9 +12,13 @@ import { paper, results } from "../data/site";
     <section class="hero" aria-labelledby="paper-title">
       <p class="eyebrow">Supplementary material</p>
       <h1 id="paper-title">{paper.titleLines[0]} <small>{paper.titleLines[1]}</small></h1>
+      <div class="paper-byline">
+        <p class="paper-authors">{paper.authors.map(name => <span>{name}</span>)}</p>
+        <p class="paper-affiliation">{paper.affiliation}</p>
+      </div>
       <div class="publication-links" aria-label="Publication resources">
-        <a class="pill pill-primary" href={paper.links.paper}><Icon name="paper" /> Paper</a>
-        <a class="pill" href={paper.links.proofs} download><Icon name="download" /> Lean Proofs</a>
+        <a class="pill pill-primary" href={paper.links.paper}><Icon name="arxiv" /> Paper</a>
+        <a class="pill" href={paper.links.proofs}><Icon name="github" /> Lean Proofs</a>
         <VideoDialog src={paper.links.video} />
         <a class="pill" href="#examples"><Icon name="examples" /> Examples</a>
       </div>

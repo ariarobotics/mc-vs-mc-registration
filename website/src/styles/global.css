@@ -28,6 +28,9 @@ a:focus-visible, summary:focus-visible, button:focus-visible, input:focus-visibl
 .eyebrow { color: var(--teal); font-size: .64rem; font-weight: 700; letter-spacing: .14em; line-height: 1.5; text-transform: uppercase; margin: 0 0 12px; }
 .hero h1 { font-family: var(--serif); font-size: clamp(2.4rem, 4.4vw, 3.85rem); font-weight: 400; line-height: 1.08; letter-spacing: -.045em; margin: 0 auto; max-width: 1040px; }
 .hero h1 small { display: block; font-size: .58em; font-weight: 400; letter-spacing: -.018em; margin-top: 12px; }
+.paper-byline { margin-top: 22px; }
+.paper-authors { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 24px; margin: 0; font-size: .95rem; font-weight: 500; }
+.paper-affiliation { margin: 7px 0 0; color: var(--muted); font-size: .8rem; }
 .publication-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 24px; }
 .pill { cursor:pointer; font-family:inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 39px; padding: 7px 17px; border: 1px solid var(--line); border-radius: 6px; font-size: .73rem; font-weight: 600; text-decoration: none; background: var(--surface); color: var(--ink); }
 .pill:hover { border-color: var(--teal); color: var(--teal); }
