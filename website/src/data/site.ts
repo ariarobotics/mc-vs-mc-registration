@@ -9,6 +9,16 @@ export const paper = {
     links: { paper: "https://arxiv.org/abs/2610.27275", proofs: "https://github.com/ariarobotics/mc-vs-mc-registration", video: sitePath("media/maximum-clique-and-maximum-consensus.mp4"), lean: "https://lean-lang.org/" },
     abstract: String.raw `Maximum clique and maximum consensus are widely used formulations for robust point cloud registration in robotics. Maximum consensus seeks one transformation that aligns as many matches as possible, while maximum clique selects matches through pairwise distance tests. Maximum clique is often used as a substitute for or an approximation to maximum consensus, with empirical evidence suggesting a close relationship. However, how closely the two formulations agree is not fully understood. We study this relationship theoretically. We show that a maximum clique can have arbitrarily large alignment error and be arbitrarily larger than the maximum consensus set at any fixed positive tolerance, and derive geometric conditions that bound this error. When rotation is fixed, we derive sharp error bounds and tests that exactly characterize maximum consensus for the translation subproblem. Finally, we study group-$k$ consistency, which tests groups of $k$ matches, and determine the smallest group sizes that guarantee alignment error bounds independent of point cloud scale and geometry. These are $d+1$ for rotations and translations and $d+2$ when reflections are allowed, in dimensions $d\ge2$. Interactive examples and proof verification using the Lean theorem prover are available at \url{https://ariarobotics.github.io/mc-vs-mc-registration/}.`,
 };
+export const citation = `@misc{cliqueConsensus2026,
+  title         = {On Maximum Clique and Maximum Consensus Formulations in Point Cloud Registration},
+  author        = {Abolfazl Babanazari and Kaveh Fathian},
+  year          = {2026},
+  eprint        = {2610.27275},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2610.27275}
+}`;
+
 export const results = [
     {
         title: "Translation", label: "Known rotation",

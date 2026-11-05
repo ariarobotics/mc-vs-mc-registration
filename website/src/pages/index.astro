@@ -5,7 +5,7 @@ import Icon from "../components/Icon.astro";
 import VideoDialog from "../components/VideoDialog.astro";
 import ExampleExplorer from "../components/ExampleExplorer.astro";
 import RealWorldExplorer from "../components/RealWorldExplorer.astro";
-import { paper, results } from "../data/site";
+import { citation, paper, results } from "../data/site";
 ---
 <Page>
   <main id="main">
@@ -102,5 +102,16 @@ import { paper, results } from "../data/site";
       <div class="section-heading"><h2 id="real-world-title">Real-world Examples</h2></div>
       <RealWorldExplorer />
     </section>
+
+    <section id="citation" class="section" aria-labelledby="citation-title">
+      <div class="section-heading"><h2 id="citation-title">Citation</h2></div>
+      <p>If you use this work, please cite the paper:</p>
+      <pre class="citation-code" tabindex="0" aria-label="BibTeX citation"><code>{citation}</code></pre>
+    </section>
   </main>
 </Page>
+
+<style>
+  .citation-code { margin: 18px 0 0; padding: 22px 24px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font-size: .78rem; line-height: 1.7; }
+  .citation-code code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+</style>
